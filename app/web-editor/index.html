@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Web Editor Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- CodeMirror 5 from CDN (simple demo). Replace with CodeMirror 6 for production. -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css"
+    />
+    <style>
+      html, body, #editor { height: 100%; margin: 0; }
+      #toolbar { background:#f4f4f4; padding:6px; display:flex; gap:6px; }
+      #editorContainer { height: calc(100% - 44px); }
+    </style>
+  </head>
+  <body>
+    <div id="toolbar">
+      <button id="openBtn">Open sample.txt</button>
+      <button id="saveBtn">Save</button>
+      <span id="status"></span>
+    </div>
+    <div id="editorContainer">
+      <textarea id="editor">// Loading editor...</textarea>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+    <script src="editor.js"></script>
+  </body>
+</html>
