@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Pyodide Runner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+  </head>
+  <body>
+    <script>
+      // Utility to post messages back to Flutter via the Javascript channel named 'PythonRunner'
+      function sendToFlutter(obj) {
+        const json = JSON.stringify(obj);
+        try {
+          if (window.PythonRunner && window.PythonRunner.postMessage) {
+            window.PythonRunner.postMessage(json);
+          } else if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.PythonRunner) {
+            window.webkit.messageHandlers.PythonRunner.postMessage(json);
+          } else {
+            console.log('No PythonRunner channel:', obj);
+          }
+        } catch (e) {
+          console.error('sendToFlutter error', e);
+        }
+      }
+
+      async function initPyodide() {
+        try {
+          self.pyodide = await loadPyodide();
+          sendToFlutter({ type: 'pyodide.ready' });
+        } catch (e) {
+          sendToFlutter({ type: 'pyodide.error', error: String(e) });
+        }
+      }
+
+      // Run user code and capture stdout/stderr
+      async function runUserCode(id, code) {
+        try {
+          // Try to pre-load packages if imports are present (best-effort)
+          try {
+            await pyodide.loadPackagesFromImports(code);
+          } catch (e) {
+            // ignore package load errors for now
+          }
+
+          pyodide.globals.set('user_code', code);
+          const runner = `
+def __run_user_code():
+    import sys, io, traceback
+    old_out = sys.stdout
+    old_err = sys.stderr
+    sys.stdout = io.StringIO()
+    sys.stderr = io.StringIO()
+    try:
+        exec(user_code, {})
+    except Exception:
+        traceback.print_exc()
+    out = sys.stdout.getvalue()
+    err = sys.stderr.getvalue()
+    sys.stdout = old_out
+    sys.stderr = old_err
+    return out, err
+
+__run_user_code()
+`;
+          const res = await pyodide.runPythonAsync(runner);
+          // res is a PyProxy for a tuple (out, err)
+          const out = res[0] ? res[0].toString() : '';
+          const err = res[1] ? res[1].toString() : '';
+          sendToFlutter({ type: 'run.execute.response', id: id, ok: true, payload: { stdout: out, stderr: err } });
+        } catch (e) {
+          sendToFlutter({ type: 'run.execute.response', id: id, ok: false, error: String(e) });
+        }
+      }
+
+      // Receive messages from Flutter via window.onNativeMessage
+      window.onNativeMessage = function(msg) {
+        try {
+          const type = msg.type || '';
+          const id = msg.id || '';
+          const payload = msg.payload || {};
+          if (type === 'run.execute') {
+            runUserCode(id, payload.code || '');
+          }
+        } catch (e) {
+          sendToFlutter({ type: 'runner.error', error: String(e) });
+        }
+      };
+
+      // Initialize
+      initPyodide();
+    </script>
+  </body>
+</html>
