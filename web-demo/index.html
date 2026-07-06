@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tuzday — Web Demo (Code Editor + Pyodide)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <header>
+      <h1>Tuzday — Web Demo</h1>
+      <p>Edit Python code and run it in the browser using Pyodide.</p>
+    </header>
+
+    <div id="toolbar">
+      <button id="loadSample">Load Sample</button>
+      <button id="runBtn">Run</button>
+      <button id="clearOutput">Clear Output</button>
+      <span id="status">Loading Pyodide...</span>
+    </div>
+
+    <main>
+      <section id="editorPane">
+        <textarea id="editor"># Tuzday web demo\nprint('Hello from Tuzday web demo')\n</textarea>
+      </section>
+      <section id="outputPane">
+        <div class="outputHeader">Output</div>
+        <pre id="output" class="output"></pre>
+      </section>
+    </main>
+
+    <footer>
+      <small>Pyodide loaded from CDN for demo purposes. For production, consider bundling the runtime.</small>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+    <script src="editor.js"></script>
+  </body>
+</html>
