@@ -1,0 +1,6 @@
+// Sample text file for the demo project
+// Edit this file from the app and save to see changes persist.
+
+// Tuzday Mobile IDE - demo sample
+
+console.log('This is a sample project file for Tuzday Mobile IDE demo.');
