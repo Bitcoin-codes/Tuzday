@@ -1,5 +1,5 @@
 name: mobile_ide_shell
-description: A minimal Flutter shell embedding a web-editor for the Mobile IDE demo.
+description: A minimal Flutter shell embedding a native editor. Web-based runner and demos removed in this branch.
 publish_to: "none"
 version: 0.0.1
 environment:
@@ -7,12 +7,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  webview_flutter: ^4.0.7
+  path_provider: ^2.0.14
+  path: ^1.8.3
+  code_text_field: ^1.5.3
+  highlight: ^0.7.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
 flutter:
   uses-material-design: true
   assets:
-    - assets/web-editor/index.html
-    - assets/web-editor/editor.js
+    # Web assets and pyodide runner removed in this branch
